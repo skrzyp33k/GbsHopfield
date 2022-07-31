@@ -7,9 +7,9 @@ namespace HopfieldSSEditor
 {
     public partial class MainWindow : Window
     {
-        private const int N = 9; //rows
-        private const int M = 9; //columns
-        private const int PixelSize = 60;
+        public const int N = 9; //rows
+        public const int M = 9; //columns
+        private const int PixelSize = 30;
 
         private bool[,] pixels;
 
@@ -50,7 +50,7 @@ namespace HopfieldSSEditor
         private void buildStructure()
         {
             MWindow.Title = "HopfieldSS Editor " + N.ToString() + "x" + M.ToString();
-            MWindow.ResizeMode = ResizeMode.CanMinimize;
+            MWindow.ResizeMode = ResizeMode.NoResize;
             MWindow.Height = N * PixelSize + 39 + 150;
             MWindow.Width = M * PixelSize + 16;
             MWindow.Padding = new Thickness(0);
@@ -123,22 +123,47 @@ namespace HopfieldSSEditor
             ButtonGrid.HorizontalAlignment = HorizontalAlignment.Center;
             ButtonGrid.VerticalAlignment = VerticalAlignment.Center;
 
-            TextBlock buttonText = new TextBlock();
+            ColumnDefinition col1 = new ColumnDefinition();
+            ColumnDefinition col2 = new ColumnDefinition();
 
-            buttonText.Text = "Uruchom sieć";
-            buttonText.FontWeight = FontWeights.ExtraBold;
-            buttonText.FontSize = N + M;
+            ButtonGrid.ColumnDefinitions.Add(col1);
+            ButtonGrid.ColumnDefinitions.Add(col2);
 
-            Button runNetworkButton = new Button();
+            TextBlock addPictureButtonText = new TextBlock();
 
-            runNetworkButton.Name = "runNetworkButton";
-            runNetworkButton.Content = buttonText;
-            runNetworkButton.Padding = new Thickness(10);
-            runNetworkButton.Height = 130;
-            runNetworkButton.Width = (M * PixelSize) - 20;
-            runNetworkButton.Click += runNetworkButtonClick;
+            addPictureButtonText.Text = "Zapisz obraz";
+            addPictureButtonText.FontWeight = FontWeights.Bold;
+            addPictureButtonText.FontSize = 18;
 
-            ButtonGrid.Children.Add(runNetworkButton);
+            Button addPictureButton = new Button();
+
+            addPictureButton.Name = "addPictureButton";
+            addPictureButton.Content = addPictureButtonText;
+            addPictureButton.Padding = new Thickness(10);
+            addPictureButton.Height = 130;
+            addPictureButton.Width = ((M * PixelSize) - 20) / 2;
+            addPictureButton.Click += addPictureButtonClick;
+
+            TextBlock restorePictureButtonText = new TextBlock();
+
+            restorePictureButtonText.Text = "Odtwórz obraz";
+            restorePictureButtonText.FontWeight = FontWeights.Bold;
+            restorePictureButtonText.FontSize = 18;
+
+            Button restorePictureButton = new Button();
+
+            restorePictureButton.Name = "restorePictureButton";
+            restorePictureButton.Content = restorePictureButtonText;
+            restorePictureButton.Padding = new Thickness(10);
+            restorePictureButton.Height = 130;
+            restorePictureButton.Width = ((M * PixelSize) - 20) / 2;
+            restorePictureButton.Click += restorePictureButtonClick;
+
+            Grid.SetColumn(addPictureButton, 0);
+            Grid.SetColumn(restorePictureButton, 1);
+
+            ButtonGrid.Children.Add(addPictureButton);
+            ButtonGrid.Children.Add(restorePictureButton);
 
             Grid.SetRow(ButtonGrid, 1);
 
@@ -148,9 +173,15 @@ namespace HopfieldSSEditor
             MWindow.Content = MainGrid;
         }
 
-        private void runNetworkButtonClick(object sender, RoutedEventArgs e)
+        private void addPictureButtonClick(object sender, RoutedEventArgs e)
         {
+            HopfieldNetwork.AddCurrentImageToWeightMatrix(pixels);
+        }
 
+        private void restorePictureButtonClick(object sender, RoutedEventArgs e)
+        {
+            pixels = HopfieldNetwork.RunHopfield(pixels);
+            colorButtons();
         }
 
         public MainWindow()

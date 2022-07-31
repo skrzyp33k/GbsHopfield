@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace HopfieldSS_Tools
+namespace HopfieldSSEditor
 {
-    internal class Matrix
+    public class Matrix
     {
         public double[,] rawData { get; private set; }
         public int Rows { get; private set; }
@@ -28,6 +28,21 @@ namespace HopfieldSS_Tools
                 }
                 Console.WriteLine();
             }
+        }
+
+        public Matrix Transposition()
+        {
+            Matrix transposed = new Matrix(this.Columns, this.Rows);
+
+            for (int i = 0; i < transposed.Rows; i++)
+            {
+                for (int j = 0; j < transposed.Columns; j++)
+                {
+                    transposed.setElement(i, j, this.getElement(j, i));
+                }
+            }
+
+            return transposed;
         }
 
         public Matrix()
